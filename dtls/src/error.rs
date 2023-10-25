@@ -158,6 +158,8 @@ pub enum Error {
     #[error("{0}")]
     Sec1(#[source] sec1::Error),
     #[error("{0}")]
+    Aes(#[from] aes::cipher::InvalidLength),
+    #[error("{0}")]
     P256(#[source] P256Error),
     #[error("{0}")]
     RcGen(#[from] RcgenError),
@@ -214,16 +216,7 @@ impl From<p256::elliptic_curve::Error> for Error {
     }
 }
 
-impl From<block_modes::InvalidKeyIvLength> for Error {
-    fn from(e: block_modes::InvalidKeyIvLength) -> Self {
-        Error::Other(e.to_string())
-    }
-}
-impl From<block_modes::BlockModeError> for Error {
-    fn from(e: block_modes::BlockModeError) -> Self {
-        Error::Other(e.to_string())
-    }
-}
+
 
 // Because Tokio SendError is parameterized, we sadly lose the backtrace.
 impl<T> From<MpscSendError<T>> for Error {
